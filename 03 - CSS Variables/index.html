@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Scoped CSS Variables and JS</title>
+</head>
+<body>
+  <h2>Update CSS Variables with <span class='highlight'>JS</span></h2>
+
+  <div class="controls">
+    <label for="spacing">Spacing:</label>
+    <input id="spacing" type="range" name="spacing" min="10" max="200" value="10" data-sizing="px">
+
+    <label for="blur">Blur:</label>
+    <input id="blur" type="range" name="blur" min="0" max="25" value="10" data-sizing="px">
+
+    <label for="base">Base Color</label>
+    <input id="base" type="color" name="base" value="#ffc600">
+  </div>
+
+  <img src="https://source.unsplash.com/7bwQXzbF6KE/800x500">
+
+  <style>
+
+    :root {
+      --spacing: 10px;
+      --base: rgb(255, 200, 0);
+      --blur: 10px;
+    }
+
+    .highlight {
+      color: var(--base);
+    }
+
+    img {
+      padding: var(--spacing);
+      filter: blur(var(--blur));
+      background-color: var(--base);
+    }
+
+    /*
+      misc styles, nothing to do with CSS variables
+    */
+
+    body {
+      text-align: center;
+      background: #193549;
+      color: white;
+      font-family: 'helvetica neue', sans-serif;
+      font-weight: 100;
+      font-size: 50px;
+    }
+
+    .controls {
+      margin-bottom: 50px;
+    }
+
+    input {
+      width: 100px;
+    }
+  </style>
+
+  <script>
+    const inputs = document.querySelectorAll('.controls input')
+
+    // below arrow function doesn't work here since there is no this binding in arrow functions
+    // const handleChange = () => {
+    //   const value = e.target.value + (this.dataset.sizing || '');
+    //   console.log(`--${this.name}`, value)
+    //   document.documentElement.style.setProperty(`--${this.name}`, value);
+    // }
+
+    const handleChange = function(e) {
+      const value = e.target.value + (this.dataset.sizing || '');
+      console.log(`--${this.name}`, value)
+      document.documentElement.style.setProperty(`--${this.name}`, value);
+
+    }
+    
+    inputs.forEach(input => input.addEventListener('change', handleChange));
+
+  </script>
+
+</body>
+</html>
