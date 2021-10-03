@@ -71,28 +71,23 @@
 
   <script>
 
-
-    const time1 = new Date
     const second = document.querySelector('.second-hand')
     const minute = document.querySelector('.min-hand')
-    console.log(minute)
     const hour = document.querySelector('.hour-hand')
 
-    setInterval(() => {
+    
+    const tick = () => {
+      const startingPointDegree = 91;
+      
       const time = new Date
       const seconds = time.getSeconds();
       const minutes = time.getMinutes();
       const hours = time.getHours();
       
-      const startingPointDegree = 91;
-      
       const transformedSecondDegree = (seconds / 60) * 360
       const transformedMinuteDegree = (minutes / 60) * 360
       const transformedHourDegree = (hours / 12) * 360;
-      
-      console.log(seconds)
 
-      
       second.style.transform = `rotate(${startingPointDegree + transformedSecondDegree}deg)`
       minute.style.transform = `rotate(${startingPointDegree + transformedMinuteDegree}deg)`
       hour.style.transform = `rotate(${startingPointDegree + transformedHourDegree}deg)`
@@ -100,20 +95,14 @@
       if(seconds === 0) {
         second.style.transition = 'none';
       }
-
+  
       if(seconds === 1 && second.style.transition === 'none 0s ease 0s') {
         second.style.transition = `all 0.5s ease-in`
       }
 
-    }, 1000)
+    }
 
-
-
-
-
-    
-
-
+    setInterval(tick, 1000)
   </script>
 </body>
 </html>
