@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Type Ahead 👀</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <form class="search-form">
+    <input type="text" class="search" placeholder="City or State">
+    <ul class="suggestions">
+    </ul>
+  </form>
+<script>
+  const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+
+  const suggestions = document.querySelector('ul');
+  const input = document.querySelector('input');
+  let receivedData = [];
+
+
+  const fetchData = async () => {
+    const response = await window.fetch(endpoint)
+    receivedData = await response.json()
+  }
+
+  const filterData = (data, queryText) => {
+    const filteredList = data.filter(item => item.city.toUpperCase().includes(queryText.toUpperCase()) 
+    || item.state.toUpperCase().includes(queryText.toUpperCase()))
+    return filteredList;
+  }
+
+  const displayList = (e) => {
+    const {value} = e.target
+    const filteredData = filterData(receivedData, value);
+
+    suggestions.innerHTML = '';
+    filteredData.forEach(item => {
+
+    const spanElement = document.createElement('span');
+    const listElement = document.createElement('li');
+    
+    // matching with regex 
+    //   function displayMatches() {
+    //   const matchArray = findMatches(this.value, cities);
+    //   const html = matchArray.map(place => {
+    //   const regex = new RegExp(this.value, 'gi');
+    //   const cityName = place.city.replace(regex, `<span class="hl">${this.value}</span>`);
+    //   const stateName = place.state.replace(regex, `<span class="hl">${this.value}</span>`);
+    //   return `
+    //       <li>
+    //         <span class="name">${cityName}, ${stateName}</span>
+    //         <span class="population">${numberWithCommas(place.population)}</span>
+    //       </li>
+    //     `;
+    //   }).join('');
+    //   suggestions.innerHTML = html;
+    // }
+
+    // highlight matching text
+    if(item.city.toUpperCase().includes(value.toUpperCase()) || item.state.toUpperCase().includes(value.toUpperCase())){
+      const city = item.city.toLowerCase().replace(value.toLowerCase(), `<span class='highlight'>${value}</span>`)
+      const state = item.state.toLowerCase().replace(value.toLowerCase(), `<span class='highlight'>${value}</span>`)
+      listElement.innerHTML= `<span>${city}, ${state}</span>`;
+    }
+    else{
+      listElement.textContent= item.city + ', ' + item.state;
+    }
+
+    spanElement.textContent = item.population;
+    spanElement.classList.add('population');  
+    listElement.appendChild(spanElement);
+    suggestions.appendChild(listElement)
+    })
+  }
+
+  fetchData()
+  input.addEventListener('keyup', displayList)
+  input.addEventListener('change', displayList)
+
+</script>
+</body>
+</html>
