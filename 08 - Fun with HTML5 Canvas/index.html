@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Canvas</title>
+</head>
+<body>
+  <div>
+    <label>Thickness:</label>
+    <input type='range' />
+    <label>Color:</label>
+    <input type='color' />
+    <label class='timer'>Remaining seconds: </label>
+    <label class='timer' id='timer'>0</label>
+
+  </div>
+  
+  <canvas id="draw" width="800" height="800"></canvas>
+<script>
+
+let time = window.prompt("Enter time limit: ");
+
+const canvas = document.querySelector('canvas');
+const timer = document.querySelector('#timer');
+const range = document.querySelector('input[type=range]');
+const colorPicker = document.querySelector('input[type=color]');
+const ctx = canvas.getContext('2d');
+
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight - 100; 
+
+ctx.lineJoin = 'round';
+ctx.lineCap = 'round';
+ctx.lineWidth = 50;
+
+const autoLineWidth = false;
+const autoColor = false;
+let hue = 0;
+let isDrawing = false;
+let gameIsOver = false;
+let direction = true;
+let lastX = 0;
+let lastY = 0;
+timer.textContent = time;
+
+
+const gameLoop = function(){
+  const timerFunc = () => {
+    if(time === 0){
+      gameIsOver = true;
+      alert('Game is over')
+      window.clearInterval(timerFunc);
+    }
+    time--
+    timer.textContent = time;
+  }
+  window.setInterval(timerFunc, 1000)
+}
+
+const draw = function(e){
+  if(!isDrawing) return;
+
+  ctx.beginPath();
+  //start from
+  ctx.moveTo(lastX,lastY);
+  //go to
+  ctx.lineTo(e.offsetX, e.offsetY);
+  ctx.stroke();
+
+  lastX = e.offsetX;
+  lastY = e.offsetY;
+
+  if(autoColor){
+    hue++;
+    if (hue >= 360) {
+      hue = 0;
+    }
+  }
+
+  if(autoLineWidth){
+    if(ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+      direction = !direction;
+    }
+    if(direction){
+      ctx.lineWidth++
+    }else{
+      ctx.lineWidth--;
+    }
+  }
+}
+
+const onColorChange = (e) => {
+  ctx.strokeStyle = e.target.value
+}
+
+const onRangeChange = (e) => {
+  ctx.lineWidth = e.target.value;
+}
+
+
+
+canvas.addEventListener('mousedown', (e) => {
+  isDrawing = true
+  lastX = e.offsetX;
+  lastY = e.offsetY;
+});
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', () => isDrawing = false);
+range.addEventListener('change', onRangeChange);
+colorPicker.addEventListener('change', onColorChange);
+
+gameLoop();
+
+</script>
+
+<style>
+  html, body {
+    margin: 0;
+  }
+
+  div{
+    border-bottom: 2px solid grey;
+    padding: 10px 20px;
+    display:flex;
+    align-items: center;
+  }
+
+  label{
+    padding: 0 10px 0 20px;
+  }
+
+  .timer{
+    font-weight: bold;
+    font-size: 20px;
+  }
+</style>
+
+</body>
+</html>
