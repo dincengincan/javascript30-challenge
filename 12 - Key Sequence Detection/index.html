@@ -9,23 +9,22 @@
 <script>
 
 
-  const secretKey = 'wasdkl'
-  let keys = [];
+  const secretKey = 'combo'
+  let pressed = [];
 
   const handleKeyUp = (e) => {
-    keys.push(e.key)
+    pressed.push(e.key)
 
    // also possible like below
-   // pressed.splice(-secretCode.length - 1, pressed.length - secretCode.length);
+  //  pressed.splice(-secretKey.length, pressed.length - secretKey.length);
 
-    if(keys.length > secretKey.length){
-      keys.splice(0, keys.length - secretKey.length)
-      if(keys.join('').includes(secretKey)){
+      pressed.splice(0, pressed.length - secretKey.length)
+      if(pressed.join('').includes(secretKey)){
         console.log('found it!')
       }
-    }
-  }
+      console.log(pressed)
 
+  }
   document.addEventListener('keyup', handleKeyUp)
 
 </script>
