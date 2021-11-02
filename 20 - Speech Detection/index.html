@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Speech Detection</title>
+</head>
+<body>
+
+  <button>Start listening!</button>
+  <div class="words" contenteditable>
+  </div>
+
+<script>
+
+  const words = document.querySelector('.words');
+  const button = document.querySelector('button');
+  let p = document.createElement('p');
+  words.appendChild(p);
+
+  let listen = false;
+  let recognition;
+  
+  window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  const displaySpeech = (e) => {
+    // display it on the DOM
+    p.textContent = e.results[0][0].transcript;
+  
+    // if speech is over create a new paragraph
+    if(e.results[0].isFinal){
+      p = document.createElement('p');
+      words.appendChild(p);
+    }
+  }
+
+  const startListening = () => {
+    if(!listen){
+      recognition = new SpeechRecognition();
+      recognition.interimResults = true;
+      recognition.start();
+      
+      listen = true;
+      button.textContent = 'Stop listening'
+      
+
+      recognition.addEventListener('result', displaySpeech);
+      // start again when speech is over
+      recognition.addEventListener('end', recognition.start);
+
+    }
+    else{
+      listen = false;
+      button.textContent = 'Start listening'  
+
+      recognition.stop();
+
+      recognition.removeEventListener('result', displaySpeech);
+      recognition.removeEventListener('end', recognition.start);
+    }
+  }
+
+  // start listening when button is clicked
+  button.addEventListener('click', startListening);
+
+</script>
+
+
+  <style>
+    html {
+      font-size: 10px;
+    }
+
+    body {
+      background: #ffc600;
+      font-family: 'helvetica neue';
+      font-weight: 200;
+      font-size: 20px;
+    }
+
+    .words {
+      max-width: 500px;
+      margin: 50px auto;
+      background: white;
+      border-radius: 5px;
+      box-shadow: 10px 10px 0 rgba(0,0,0,0.1);
+      padding: 1rem 2rem 1rem 5rem;
+      background: -webkit-gradient(linear, 0 0, 0 100%, from(#d9eaf3), color-stop(4%, #fff)) 0 4px;
+      background-size: 100% 3rem;
+      position: relative;
+      line-height: 3rem;
+    }
+    
+    p {
+      margin: 0 0 3rem;
+    }
+
+    .words:before {
+      content: '';
+      position: absolute;
+      width: 4px;
+      top: 0;
+      left: 30px;
+      bottom: 0;
+      border: 1px solid;
+      border-color: transparent #efe4e4;
+    }
+  </style>
+
+</body>
+</html>
